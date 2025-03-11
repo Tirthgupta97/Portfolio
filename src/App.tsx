@@ -44,15 +44,6 @@ interface ContactForm {
   message: string;
 }
 
-// Add this interface after your existing interfaces
-interface Message {
-  id: number;
-  name: string;
-  email: string;
-  message: string;
-  date: string;
-}
-
 // Add this component at the top of your file
 const FloatingDots = () => (
   <div className="fixed inset-0 -z-10 overflow-hidden">
@@ -164,24 +155,8 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
 
-  // Add this state after your existing states
-  const [messages, setMessages] = useState<Message[]>([]);
-
   // Add this at the top of your App component
   const [scrollProgress, setScrollProgress] = useState(0);
-
-  useEffect(() => {
-    // Load saved messages on component mount
-    const savedMessages = localStorage.getItem('contactMessages');
-    if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
-    }
-  }, []);
-
-  useEffect(() => {
-    // Save messages whenever they change
-    localStorage.setItem('contactMessages', JSON.stringify(messages));
-  }, [messages]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -212,16 +187,6 @@ function App() {
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
       
-      // Add message to local state
-      const newMessage: Message = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        message: formData.message,
-        date: new Date().toLocaleString()
-      };
-      
-      setMessages(prev => [newMessage, ...prev]);
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
@@ -809,32 +774,6 @@ function App() {
                 </motion.p>
               )}
             </form>
-
-            {/* Messages List */}
-            {messages.length > 0 && (
-              <div className="mt-16">
-                <h3 className="text-2xl font-semibold mb-8 text-center">Recent Messages</h3>
-                <div className="space-y-6">
-                  {messages.map((msg) => (
-                    <motion.div
-                      key={msg.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-gray-800 rounded-lg p-6"
-                    >
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h4 className="font-semibold text-primary-400">{msg.name}</h4>
-                          <p className="text-sm text-gray-400">{msg.email}</p>
-                        </div>
-                        <span className="text-xs text-gray-500">{msg.date}</span>
-                      </div>
-                      <p className="text-gray-300">{msg.message}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            )}
           </motion.div>
         </section>
       </motion.div>
